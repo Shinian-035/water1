@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Charity:Water – Clean Water For All</title>
+
+  <!-- Font note ➜ Proxima Nova isn’t on Google Fonts; browsers will use a local copy if installed, then Avenir, then system‑sans. -->
+  <style>
+    /*********************************
+      RESET & THEME VARIABLES
+    *********************************/
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      /* ─── PRIMARY PALETTE ─── */
+      --yellow: #FFC907;
+      --blue:   #2E9DF7;
+      --blue-dark: #1B84CF; /* hover shade */
+
+      /* ─── SECONDARY PALETTE (not used yet) ─── */
+      --light-blue: #8BD1CB;
+      --green: #4FCB53;
+      --orange: #FF902A;
+      --red: #F5402C;
+      --dark-green: #159A48;
+      --pink: #F16061;
+
+      /* Text */
+      --text-light: #FFFFFF;
+    }
+
+    body {
+      font-family: "Proxima Nova", Avenir, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      color: var(--text-light);
+      background: var(--blue);
+      min-height: 100vh;
+      overflow-x: hidden; /* prevent scroll on angled footer */
+    }
+
+    html { scroll-behavior: smooth; }
+
+    /*********************************
+      HEADER
+    *********************************/
+    header {
+      background: var(--yellow);
+      color: var(--blue);
+      padding: 0.75rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 700;
+      font-size: 1.5rem;
+    }
+
+    .logo img {
+      width: 40px;
+      height: 40px;
+      transition: transform 0.3s ease; /* playful tilt */
+    }
+    .logo:hover img { transform: rotate(-10deg) scale(1.08); }
+
+    .btn-water {
+      background: var(--blue);
+      color: var(--text-light);
+      border: none;
+      padding: 0.5rem 1.25rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: transform 0.25s ease, background 0.25s ease;
+    }
+    .btn-water:hover { transform: translateY(-3px) scale(1.05); background: var(--blue-dark); }
+
+    /*********************************
+      HERO SECTION
+    *********************************/
+    .hero {
+      display: flex;
+      flex-wrap: wrap; /* stack on narrow screens */
+      align-items: center;
+      justify-content: space-between;
+      gap: 2rem;
+      padding: 4rem 1rem 3rem;
+      min-height: calc(100vh - 80px); /* full‑height minus header */
+      background: var(--blue);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* decorative angled slice behind image */
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -20%;
+      bottom: -30%;
+      width: 150%;
+      height: 150%;
+      background: var(--yellow);
+      transform: rotate(10deg);
+      z-index: -1;
+    }
+
+    .hero-copy {
+      flex: 1 1 350px;
+      max-width: 500px;
+      animation: fadeIn 0.8s ease-out both;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.25rem, 6vw, 3.5rem);
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--yellow);
+      line-height: 1.1;
+    }
+
+    .hero p { margin-bottom: 2rem; }
+
+    /* CTA BAR */
+    .cta-bar {
+      background: var(--yellow);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      position: relative; /* for ribbon */
+    }
+
+    .cta-bar span {
+      color: var(--blue);
+      font-weight: 600;
+      flex: 1;
+    }
+
+    /* hidden checkbox toggles ribbon */
+    #donateToggle { display: none; }
+
+    /* Donate button (styled label) */
+    .btn-donate {
+      background: var(--blue);
+      color: var(--text-light);
+      border: none;
+      padding: 0.75rem 2rem;
+      border-radius: 6px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: transform 0.25s ease, background 0.25s ease;
+      display: inline-block;
+    }
+    .btn-donate:hover { transform: translateY(-3px) scale(1.05); background: var(--blue-dark); }
+
+    /* Ribbon */
+    .ribbon {
+      position: absolute;
+      top: -20px;
+      right: -20px;
+      width: 120px;
+      background: var(--yellow);
+      color: var(--blue);
+      text-align: center;
+      padding: 0.5rem 0;
+      font-weight: 700;
+      transform: rotate(45deg) scale(0);
+      transform-origin: center;
+      opacity: 0;
+      transition: transform 0.5s ease-out, opacity 0.5s ease-out;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+
+    /* reveal ribbon */
+    #donateToggle:checked + label + .ribbon {
+      transform: rotate(45deg) scale(1);
+      opacity: 1;
+    }
+
+    /* Image column */
+    .hero-img-wrapper {
+      flex: 1 1 300px;
+      display: flex;
+      justify-content: center;
+      perspective: 900px;
+    }
+
+    .hero img {
+      width: 100%;
+      max-width: 420px;
+      border-radius: 4px;
+      transition: transform 0.4s ease;
+      transform-origin: center center;
+    }
+    .hero img:hover {
+      transform: scale(1.05) rotateX(2deg) rotateY(-3deg);
+    }
+
+    /*********************************
+      RESPONSIVE
+    *********************************/
+    @media (max-width: 900px) {
+      .hero { flex-direction: column; text-align: center; }
+      .cta-bar { flex-direction: column; }
+      .cta-bar span { text-align: center; }
+    }
+
+    @media (max-width: 500px) {
+      .btn-donate, .btn-water { padding: 0.5rem 1.25rem; }
+      .cta-bar { gap: 0.5rem; padding: 0.75rem; }
+    }
+
+    /*********************************
+      FOOTER – DECORATIVE ANGLED STRIP
+    *********************************/
+    footer {
+      height: 100px;
+      background: var(--yellow);
+      clip-path: polygon(0 0, 100% 50%, 100% 100%, 0 50%);
+    }
+
+    /*********************************
+      KEYFRAMES
+    *********************************/
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="logo">
+      <!-- Placeholder icon (💧) -->
+      <img src="img/cw_logo.png" alt="Drop Logo" />
+      Charity:Water
+    </div>
+    <button class="btn-water">Water</button>
+  </header>
+
+  <!-- Hero -->
+  <main class="hero">
+    <!-- Copy column -->
+    <div class="hero-copy">
+      <h1>Let kindness<br>become clean<br>water</h1>
+      <p>Your donation will bring safe drinking water to real people—and you’ll see exactly where every dollar goes.</p>
+
+      <div class="cta-bar">
+        <span>Make your spare money goodwill</span>
+
+        <!-- hidden checkbox + label = button toggle -->
+        <input type="checkbox" id="donateToggle">
+        <label for="donateToggle" class="btn-donate">Donate</label>
+
+        <!-- Ribbon shows when checked -->
+        <div class="ribbon">Thank you!</div>
+      </div>
+    </div>
+
+    <!-- Image column -->
+    <div class="hero-img-wrapper">
+      <!-- replace with real image later -->
+      <img src="img/0008_Ethiopia_2019_CG-.jpg" alt="Woman carrying water">
+    </div>
+  </main>
+
+  <!-- Decorative footer slice -->
+  <footer></footer>
+</body>
+</html>
